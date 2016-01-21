@@ -21,6 +21,13 @@ class QLoggly:
         """Generic endpoint"""
         from urllib import urlencode
 
+        # Loggly uses 'from' in some queries, but this argument name is
+        # disallowed in Python function calls, so we use 'start' instead
+        try:
+            kwargs['from'] = kwargs.pop('start')
+        except KeyError:
+            pass
+
         # Construct query URL
         url = 'http://{account}.loggly.com/apiv2/{endpoint}?{query}'.format(
             account=self.account,
@@ -45,7 +52,7 @@ class QLoggly:
         Arguments:
             query: (required) Query string, check out the Search Query help.
             start: (optional) Start time for the search. Defaults to "-24h".
-            stop:  (optional) End time for the search. Defaults to "now".
+            until: (optional) End time for the search. Defaults to "now".
             order: (optional) Direction of results returned, either "asc" or
                               "desc". Defaults to "desc".
             size:  (optional) Number of rows returned by search. Defaults to 50.
